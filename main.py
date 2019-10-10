@@ -24,6 +24,15 @@ def is_movable(g, i):
 
     return False
 
+def show_game(s,g):
+    for i in range(9):
+        if g[i]:
+            scr.addch(1,i,str(i+1))
+            scr.addch(0, i, " ")
+        else:
+            scr.addch(0,i,str(i+1))
+            scr.addch(1, i, " ")
+    s.refresh()
 
 import sys
     
@@ -56,15 +65,7 @@ if __name__ == "__main__":
         ok = is_movable(G, idx)
         if ok:
             G[idx] = not G[idx]
-            for i in range(9):
-                if G[i]:
-                    scr.addch(1,i,str(i+1))
-                    scr.addch(0, i, " ")
-                else:
-                    scr.addch(0,i,str(i+1))
-                    scr.addch(1, i, " ")
-
-            scr.refresh()
+            show_game(scr, G)
         else:
             pass
 
