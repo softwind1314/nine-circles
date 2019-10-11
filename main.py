@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import curses
+import logging as log
+log.basicConfig(filename='example.log',level=log.DEBUG)
 
 scr = curses.initscr()
 
@@ -13,6 +15,7 @@ scr = curses.initscr()
 
 def is_movable(g, i):
     ''' G for down-side, if true, it is in down-side'''
+    log.debug('check movable, index={}'.format(i))
     if i == 0:
         return True
     if i == 1 and g[0] == False:
