@@ -13,18 +13,12 @@ scr = curses.initscr()
 
 #scr.refresh()
 
-def is_movable(g, i):
-    ''' G for down-side, if true, it is in down-side'''
-    log.debug('check movable, index={}'.format(i))
-    if i == 0:
+def is_movable(flags, index):
+    log.debug('check movable, flag={:08b}; index={}'.format(flags,index))
+    if index == 0:
         return True
-    if i == 1 and g[0] == False:
+    if flags & 0x01<<index:
         return True
-
-    if g[i-1] == False:
-        if False not in g[0:i-1]:
-            return True
-
     return False
 
 def show_game(s,g):
@@ -55,6 +49,7 @@ if __name__ == "__main__":
             scr.delch(1,i)
     scr.refresh()
 
+    flags = 0x03
     while True:
         ch_code = scr.getch()
         ch = chr(ch_code)
@@ -64,9 +59,22 @@ if __name__ == "__main__":
 
         idx = int(ch)
         idx -= 1
-
-        ok = is_movable(G, idx)
+        log.debug('idx={}'.format(idx))
+        ok = is_movable(flags, idx)
         if ok:
+            # update flags
+            if idx == 0:
+                if not G[0]: # it is hooked, not unlocked (down-side)
+                    # seek from left to right, and lock nth then unlock nth+1 flag
+                    log.info('G#0 is moving down!')
+                    for i in range(1,8):
+                        if not G[i]: # locked
+                            flags = 0x01 + (0x01 << i+1 )
+                            log.info('update flags: {:8b}'.format(flags))
+                            break
+                else:
+                    flags = 0x03
+
             G[idx] = not G[idx]
             show_game(scr, G)
         else:
